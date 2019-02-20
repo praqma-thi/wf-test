@@ -10,7 +10,7 @@ node {
             println "Branch is a hotfix, not merging with master."
         } else {
             sh "git checkout master"
-            sh "git merge ${BRANCH_NAME}"
+            sh "git merge origin/${BRANCH_NAME}"
         }
     }
 
