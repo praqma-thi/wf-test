@@ -40,19 +40,20 @@ node ('master') {
     }
 }
 
-stage('Deploy?'){
-    try {
-        timeout(time: 1, unit: 'HOURS') {
-            input 'Promote? (Remember to tag!)'
-        }
-    } catch (Throwable t) {
-        currentBuild.result = 'SUCCESS'
-        return
-    }
-}
 
-node ('master') {
-    if (deploy) {
+if (deploy) {
+    stage('Deploy?'){
+        try {
+            timeout(time: 1, unit: 'HOURS') {
+                input 'Promote? (Remember to tag!)'
+            }
+        } catch (Throwable t) {
+            currentBuild.result = 'SUCCESS'
+            return
+        }
+    }
+
+    node ('master') {
         stage ("Deploy to test") {
             sh "./deploy.sh test-server"
         }
