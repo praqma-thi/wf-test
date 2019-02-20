@@ -27,6 +27,7 @@ node ('master') {
 
     if (publish) {
         stage ("Publish") {
+            // Properly set up ssh keys to avoid this
             withCredentials([[
                 $class: 'UsernamePasswordMultiBinding', 
                 credentialsId: "praqma-thi", 

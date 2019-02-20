@@ -1,11 +1,17 @@
-# Flubber
+# Worfklow test
 
-The Flubber project is really neat.
+This project contains a Jenkinsfile showinf off a simple workflow which runs builds differently based on branch names.
 
-## feature/foo
+* builds for branches matching `ready/*` will be:
+	* merged into `master`
+	* built
+	* published as the new `master`
+	* deleted
+* builds for branches matching `master` or `hotfix/` will be:
+	* built
+	* deployed
+* builds for branches _not_ matching any of the above will be:
+	* merged into `master`
+	* built
 
-Implemented!
-
-## Feature 35
-
-Up and running!
+	
