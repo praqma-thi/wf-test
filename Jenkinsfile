@@ -9,10 +9,6 @@ pipeline {
     }
   }
 
-  environment {
-    CURRENT_TIME = new Date().format("ddMMyy-HHmm")
-  }
-
   stages {
     stage ("Checkout") {
       steps {
@@ -77,15 +73,15 @@ pipeline {
     stage ("Deploy to test") {
       steps {
         withCredentials([sshUserPrivateKey(credentialsId: "deployment-ssh", keyFileVariable: "DEP_KEY")]) {
-          sh "sh deploy.sh ${DEP_KEY} ${env.CURRENT_TIME}"
+          sh "sh deploy.sh ${DEP_KEY}"
         }
 
         withCredentials([sshUserPrivateKey(credentialsId: "bitbucket-ssh", keyFileVariable: "BB_KEY")]) {
           sh "echo ssh -i ${BB_KEY} -l git \\"\\$@\\" > with_ssh.sh"
           sh "chmod +x with_ssh.sh"
           withEnv(["GIT_SSH=with_ssh.sh"]) {
-            sh "git tag -a -m "Deployed through Jenkins" ${env.CURRENT_TIME}"
-            sh "git push origin --tags"
+            sh "git tag -f current-dev"
+            sh "git push -f origin current-dev"
           }
         }
       }
