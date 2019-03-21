@@ -8,7 +8,8 @@ pipeline {
       agent { label "master" }
       when {
         expression {
-          return (env.BRANCH_NAME != "master") && !(env.BRANCH_NAME =~ /hotfix\/.*/)
+          // Don't merge master or hotfix branches
+          return !(env.BRANCH_NAME == "master" || env.BRANCH_NAME =~ /hotfix\/.*/)
         }
       }
 
@@ -38,6 +39,7 @@ pipeline {
       agent { label "master" }
       when {
         expression {
+          // Only publish merges made with ready branches
           return env.BRANCH_NAME =~ /ready\/.*/
         }
       }
@@ -45,6 +47,23 @@ pipeline {
       steps {
         sh "git push origin master"
         sh "git push origin :${env.BRANCH_NAME}"
+      }
+    }
+
+    // Ask if we want to deploy to the test environment
+    stage("Deploy to test?") {
+      agent none
+      steps {
+        script {
+          try {
+            timeout(time: 60, unit: 'MINUTES') {
+              env.DEPLOY = input message: 'Deploy to test?',
+              parameters: [choice(name: 'Deploy to test?', choices: 'yes\nno', description: 'Choose "yes" if you want to deploy this build')]
+            }
+          } catch (err) {
+            println "Not deploying."
+          }
+        }
       }
     }
 
@@ -60,7 +79,7 @@ pipeline {
       }
     }
 
-    stage("Decide to release") {
+    stage("Release?") {
       agent none
       steps {
         script {
