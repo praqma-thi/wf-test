@@ -1,6 +1,6 @@
 # Worfklow test
 
-This project contains a Jenkinsfile showinf off a simple workflow which runs builds differently based on branch names.
+This project contains a Jenkinsfile showing off a simple workflow which runs builds differently based on branch names.
 
 * builds for branches matching `ready/*` will be:
 	* merged into `master`
